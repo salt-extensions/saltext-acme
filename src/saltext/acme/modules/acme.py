@@ -1,15 +1,14 @@
 """
-ACME / Let's Encrypt module
-===========================
+Interface with Certbot.
 
-.. versionadded:: 2016.3.0
+This module currently looks for certbot script in the ``$PATH`` as
 
-This module currently looks for certbot script in the $PATH as
 - certbot,
 - lestsencrypt,
 - certbot-auto,
 - letsencrypt-auto
-eventually falls back to /opt/letsencrypt/letsencrypt-auto
+
+If none are found, it falls back to ``/opt/letsencrypt/letsencrypt-auto``.
 
 .. note::
 
@@ -25,7 +24,7 @@ Most parameters will fall back to cli.ini defaults if None is given.
 DNS plugins
 -----------
 
-This module currently supports the CloudFlare certbot DNS plugin.  The DNS
+This module currently supports the CloudFlare certbot DNS plugin. The DNS
 plugin credentials file needs to be passed in using the
 ``dns_plugin_credentials`` argument.
 
@@ -59,9 +58,6 @@ if salt.utils.platform.is_freebsd():
 
 
 def __virtual__():
-    """
-    Only work when letsencrypt-auto is installed
-    """
     return (
         LEA is not None,
         "The ACME execution module cannot be loaded: letsencrypt-auto not installed.",

@@ -1,11 +1,12 @@
 """
-ACME / Let's Encrypt certificate management state
-=================================================
+Manage X.509 certificates statefully using Certbot.
 
-.. versionadded:: 2016.3.0
+.. hint::
 
-See also the module documentation
+    Also see the :py:mod:`execution module documentation <saltext.acme.modules.acme>`.
 
+Example
+-------
 .. code-block:: yaml
 
     reload-gitlab:
@@ -33,9 +34,6 @@ log = logging.getLogger(__name__)
 
 
 def __virtual__():
-    """
-    Only work when the ACME module agrees
-    """
     if "acme.cert" in __salt__:
         return True
     return (False, "acme module could not be loaded")
