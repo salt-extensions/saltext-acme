@@ -2,10 +2,12 @@
 :codeauthor: Herbert Buurman <herbert.buurman@ogd.nl>
 """
 
+from unittest.mock import MagicMock
+from unittest.mock import patch
+
 import pytest
 
-import salt.states.acme as acme
-from tests.support.mock import MagicMock, patch
+import saltext.acme.states.acme as acme
 
 
 @pytest.fixture
@@ -131,9 +133,7 @@ def test_cert_renew_certificate():
         {  # pylint: disable=no-member
             "acme.has": MagicMock(return_value=True),
             "acme.needs_renewal": MagicMock(return_value=True),
-            "acme.info": MagicMock(
-                side_effect=[{"name": "old cert"}, {"name": "new cert"}] * 2
-            ),
+            "acme.info": MagicMock(side_effect=[{"name": "old cert"}, {"name": "new cert"}] * 2),
             "acme.cert": MagicMock(return_value={"result": True, "comment": "Mockery"}),
         },
     ):

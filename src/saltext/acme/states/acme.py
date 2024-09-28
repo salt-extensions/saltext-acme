@@ -112,9 +112,7 @@ def cert(
         current_certificate = __salt__["acme.info"](certname)
     else:
         ret["result"] = True
-        ret["comment"].append(
-            f"Certificate {certname} exists and does not need renewal."
-        )
+        ret["comment"].append(f"Certificate {certname} exists and does not need renewal.")
 
     if action:
         if __opts__["test"]:
@@ -149,7 +147,5 @@ def cert(
             ret["comment"].append(res["comment"])
             if ret["result"]:
                 new_certificate = __salt__["acme.info"](certname)
-            ret["changes"] = salt.utils.dictdiffer.deep_diff(
-                current_certificate, new_certificate
-            )
+            ret["changes"] = salt.utils.dictdiffer.deep_diff(current_certificate, new_certificate)
     return ret

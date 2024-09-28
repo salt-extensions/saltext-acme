@@ -5,15 +5,16 @@
 import datetime
 import os
 import textwrap
+from unittest.mock import MagicMock
+from unittest.mock import patch
 
 import pytest
-
-# Import Salt Module
-import salt.modules.acme as acme
 import salt.utils.dictupdate
 import salt.utils.platform
 from salt.exceptions import SaltInvocationError
-from tests.support.mock import MagicMock, patch
+
+# Import Salt Module
+import saltext.acme.modules.acme as acme
 
 
 @pytest.fixture
@@ -61,27 +62,19 @@ def test_needs_renewal():
     """
     Test if expired certs do indeed need renewal.
     """
-    expired = (
-        datetime.date.today() - datetime.timedelta(days=3) - datetime.date(1970, 1, 1)
-    )
-    valid = (
-        datetime.date.today() + datetime.timedelta(days=3) - datetime.date(1970, 1, 1)
-    )
+    expired = datetime.date.today() - datetime.timedelta(days=3) - datetime.date(1970, 1, 1)
+    valid = datetime.date.today() + datetime.timedelta(days=3) - datetime.date(1970, 1, 1)
     with patch.dict(
         acme.__salt__,
         {  # pylint: disable=no-member
-            "tls.cert_info": MagicMock(
-                return_value={"not_after": expired.total_seconds()}
-            )
+            "tls.cert_info": MagicMock(return_value={"not_after": expired.total_seconds()})
         },
     ):
         assert acme.needs_renewal("test_expired")
     with patch.dict(
         acme.__salt__,
         {  # pylint: disable=no-member
-            "tls.cert_info": MagicMock(
-                return_value={"not_after": valid.total_seconds()}
-            )
+            "tls.cert_info": MagicMock(return_value={"not_after": valid.total_seconds()})
         },
     ):
         assert not acme.needs_renewal("test_valid")
@@ -94,9 +87,7 @@ def test_needs_renewal():
         # Test with 'true' parameter
         assert acme.needs_renewal("test_valid", window=True)
         # Test with invalid window parameter
-        pytest.raises(
-            SaltInvocationError, acme.needs_renewal, "test_valid", window="foo"
-        )
+        pytest.raises(SaltInvocationError, acme.needs_renewal, "test_valid", window="foo")
 
 
 def test_expires():
@@ -108,9 +99,7 @@ def test_expires():
     with patch.dict(
         acme.__salt__,
         {  # pylint: disable=no-member
-            "tls.cert_info": MagicMock(
-                return_value={"not_after": test_stamp.total_seconds()}
-            )
+            "tls.cert_info": MagicMock(return_value={"not_after": test_stamp.total_seconds()})
         },
     ):
         assert (
@@ -140,9 +129,7 @@ def test_info():
         "Not After": "2019-06-02 10:29:37",
         "Subject Hash": "54:3B:6C:A4",
         "Serial Number": "59:AB:CB:A0:FB:90:E8:4B",
-        "SHA1 Finger Print": (
-            "F1:8D:F3:26:1B:D3:88:32:CD:B6:FA:3B:85:58:DA:C7:6F:62:BE:7E"
-        ),
+        "SHA1 Finger Print": ("F1:8D:F3:26:1B:D3:88:32:CD:B6:FA:3B:85:58:DA:C7:6F:62:BE:7E"),
         "SHA-256 Finger Print": (
             "FB:A4:5F:71:D6:5D:6C:B6:1D:2C:FD:91:09:2C:1C:52:"
             "3C:EC:B6:4D:1A:95:65:37:04:D0:E2:5E:C7:64:0C:9C"
@@ -287,7 +274,7 @@ def test_cert():
     }
 
     # Test fetching new certificate
-    with patch("salt.modules.acme.LEA", "certbot"), patch.dict(
+    with patch("saltext.acme.modules.acme.LEA", "certbot"), patch.dict(
         acme.__salt__,
         {  # pylint: disable=no-member
             "cmd.run_all": MagicMock(return_value=cmd_new_cert),
@@ -304,7 +291,7 @@ def test_cert():
         assert acme.cert("test") == result_new_cert
         assert acme.cert("testing.example.com", certname="test") == result_new_cert
     # Test not renewing a valid certificate
-    with patch("salt.modules.acme.LEA", "certbot"), patch.dict(
+    with patch("saltext.acme.modules.acme.LEA", "certbot"), patch.dict(
         acme.__salt__,
         {  # pylint: disable=no-member
             "cmd.run_all": MagicMock(return_value=cmd_no_renew),
@@ -321,7 +308,7 @@ def test_cert():
         assert acme.cert("test") == result_no_renew
         assert acme.cert("testing.example.com", certname="test") == result_no_renew
     # Test renewing an expired certificate
-    with patch("salt.modules.acme.LEA", "certbot"), patch.dict(
+    with patch("saltext.acme.modules.acme.LEA", "certbot"), patch.dict(
         acme.__salt__,
         {  # pylint: disable=no-member
             "cmd.run_all": MagicMock(return_value=cmd_new_cert),

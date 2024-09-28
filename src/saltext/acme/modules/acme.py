@@ -272,9 +272,7 @@ def cert(
         else:
             return {
                 "result": False,
-                "comment": "Certificate {} renewal failed with:\n{}".format(
-                    name, res["stderr"]
-                ),
+                "comment": "Certificate {} renewal failed with:\n{}".format(name, res["stderr"]),
             }
 
     if "no action taken" in res["stdout"]:
@@ -381,8 +379,8 @@ def has(name):
 
     .. code-block:: python
 
-        if __salt__['acme.has']('dev.example.com'):
-            log.info('That is one nice certificate you have there!')
+        if __salt__["acme.has"]("dev.example.com"):
+            log.info("That is one nice certificate you have there!")
     """
     return __salt__["file.file_exists"](_cert_file(name, "cert"))
 
@@ -412,17 +410,15 @@ def needs_renewal(name, window=None):
 
     .. code-block:: python
 
-        if __salt__['acme.needs_renewal']('dev.example.com'):
-            __salt__['acme.cert']('dev.example.com', **kwargs)
+        if __salt__["acme.needs_renewal"]("dev.example.com"):
+            __salt__["acme.cert"]("dev.example.com", **kwargs)
         else:
-            log.info('Your certificate is still good')
+            log.info("Your certificate is still good")
     """
     if window:
         if str(window).lower() in ("force", "true"):
             return True
-        if not (
-            isinstance(window, int) or (hasattr(window, "isdigit") and window.isdigit())
-        ):
+        if not (isinstance(window, int) or (hasattr(window, "isdigit") and window.isdigit())):
             raise SaltInvocationError(
                 'The argument "window", if provided, must be one of the following : '
                 'True (boolean), "force" or "Force" (str) or a numerical value in days.'
