@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-import saltext.acme.states.acme as acme
+from saltext.acme.states import acme
 
 
 @pytest.fixture

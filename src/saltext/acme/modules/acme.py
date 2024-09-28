@@ -375,6 +375,12 @@ def has(name):
     :param str name: Name of certificate
     :rtype: bool
 
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt 'dev.example.com' acme.has dev.example.com
+
     Code example:
 
     .. code-block:: python
@@ -393,6 +399,13 @@ def renew_by(name, window=None):
     :param int window: number of days before expiry when renewal should take place
     :rtype: str
     :return: Date of certificate renewal in ISO format.
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt 'dev.example.com' acme.renew_by dev.example.com
+        salt 'dev.example.com' acme.renew_by dev.example.com 90
     """
     return _renew_by(name, window).isoformat()
 
@@ -405,6 +418,13 @@ def needs_renewal(name, window=None):
     :param bool/str/int window: Window in days to renew earlier or True/force to just return True
     :rtype: bool
     :return: Whether or not the certificate needs to be renewed.
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt 'dev.example.com' acme.needs_renewal dev.example.com
+        salt 'dev.example.com' acme.needs_renewal dev.example.com 90
 
     Code example:
 

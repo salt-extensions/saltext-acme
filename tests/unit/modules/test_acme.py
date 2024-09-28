@@ -13,8 +13,7 @@ import salt.utils.dictupdate
 import salt.utils.platform
 from salt.exceptions import SaltInvocationError
 
-# Import Salt Module
-import saltext.acme.modules.acme as acme
+from saltext.acme.modules import acme
 
 
 @pytest.fixture
