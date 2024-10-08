@@ -1,5 +1,5 @@
-``saltext-acme``: Integrate Salt with Acme
-==========================================
+``saltext-acme``: Integrate Salt with Certbot
+=============================================
 
 Salt Extension for interacting with Certbot
 
