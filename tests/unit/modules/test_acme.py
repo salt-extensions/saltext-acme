@@ -25,20 +25,23 @@ def test_certs():
     """
     Test listing certs
     """
-    with patch.dict(
-        acme.__salt__,
-        {  # pylint: disable=no-member
-            "file.readdir": MagicMock(
-                return_value=[".", "..", "README", "test_expired", "test_valid"]
-            )
-        },
-    ), patch(
-        "os.path.isdir",
-        side_effect=lambda path: path
-        in [
-            os.path.join(acme.LE_LIVE, "test_expired"),
-            os.path.join(acme.LE_LIVE, "test_valid"),
-        ],
+    with (
+        patch.dict(
+            acme.__salt__,
+            {  # pylint: disable=no-member
+                "file.readdir": MagicMock(
+                    return_value=[".", "..", "README", "test_expired", "test_valid"]
+                )
+            },
+        ),
+        patch(
+            "os.path.isdir",
+            side_effect=lambda path: path
+            in [
+                os.path.join(acme.LE_LIVE, "test_expired"),
+                os.path.join(acme.LE_LIVE, "test_valid"),
+            ],
+        ),
     ):
         assert acme.certs() == ["test_expired", "test_valid"]
 
@@ -273,53 +276,62 @@ def test_cert():
     }
 
     # Test fetching new certificate
-    with patch("saltext.acme.modules.acme.LEA", "certbot"), patch.dict(
-        acme.__salt__,
-        {  # pylint: disable=no-member
-            "cmd.run_all": MagicMock(return_value=cmd_new_cert),
-            "file.file_exists": MagicMock(return_value=False),
-            "tls.cert_info": MagicMock(return_value={"not_after": valid_timestamp}),
-            "file.check_perms": MagicMock(
-                side_effect=lambda a, x, b, c, d, follow_symlinks: (
-                    salt.utils.dictupdate.set_dict_key_value(x, "changes:mode", "0640"),
-                    None,
-                )
-            ),
-        },
+    with (
+        patch("saltext.acme.modules.acme.LEA", "certbot"),
+        patch.dict(
+            acme.__salt__,
+            {  # pylint: disable=no-member
+                "cmd.run_all": MagicMock(return_value=cmd_new_cert),
+                "file.file_exists": MagicMock(return_value=False),
+                "tls.cert_info": MagicMock(return_value={"not_after": valid_timestamp}),
+                "file.check_perms": MagicMock(
+                    side_effect=lambda a, x, b, c, d, follow_symlinks: (
+                        salt.utils.dictupdate.set_dict_key_value(x, "changes:mode", "0640"),
+                        None,
+                    )
+                ),
+            },
+        ),
     ):
         assert acme.cert("test") == result_new_cert
         assert acme.cert("testing.example.com", certname="test") == result_new_cert
     # Test not renewing a valid certificate
-    with patch("saltext.acme.modules.acme.LEA", "certbot"), patch.dict(
-        acme.__salt__,
-        {  # pylint: disable=no-member
-            "cmd.run_all": MagicMock(return_value=cmd_no_renew),
-            "file.file_exists": MagicMock(return_value=True),
-            "tls.cert_info": MagicMock(return_value={"not_after": valid_timestamp}),
-            "file.check_perms": MagicMock(
-                side_effect=lambda a, x, b, c, d, follow_symlinks: (
-                    salt.utils.dictupdate.set_dict_key_value(x, "result", True),
-                    None,
-                )
-            ),
-        },
+    with (
+        patch("saltext.acme.modules.acme.LEA", "certbot"),
+        patch.dict(
+            acme.__salt__,
+            {  # pylint: disable=no-member
+                "cmd.run_all": MagicMock(return_value=cmd_no_renew),
+                "file.file_exists": MagicMock(return_value=True),
+                "tls.cert_info": MagicMock(return_value={"not_after": valid_timestamp}),
+                "file.check_perms": MagicMock(
+                    side_effect=lambda a, x, b, c, d, follow_symlinks: (
+                        salt.utils.dictupdate.set_dict_key_value(x, "result", True),
+                        None,
+                    )
+                ),
+            },
+        ),
     ):
         assert acme.cert("test") == result_no_renew
         assert acme.cert("testing.example.com", certname="test") == result_no_renew
     # Test renewing an expired certificate
-    with patch("saltext.acme.modules.acme.LEA", "certbot"), patch.dict(
-        acme.__salt__,
-        {  # pylint: disable=no-member
-            "cmd.run_all": MagicMock(return_value=cmd_new_cert),
-            "file.file_exists": MagicMock(return_value=True),
-            "tls.cert_info": MagicMock(return_value={"not_after": expired_timestamp}),
-            "file.check_perms": MagicMock(
-                side_effect=lambda a, x, b, c, d, follow_symlinks: (
-                    salt.utils.dictupdate.set_dict_key_value(x, "result", True),
-                    None,
-                )
-            ),
-        },
+    with (
+        patch("saltext.acme.modules.acme.LEA", "certbot"),
+        patch.dict(
+            acme.__salt__,
+            {  # pylint: disable=no-member
+                "cmd.run_all": MagicMock(return_value=cmd_new_cert),
+                "file.file_exists": MagicMock(return_value=True),
+                "tls.cert_info": MagicMock(return_value={"not_after": expired_timestamp}),
+                "file.check_perms": MagicMock(
+                    side_effect=lambda a, x, b, c, d, follow_symlinks: (
+                        salt.utils.dictupdate.set_dict_key_value(x, "result", True),
+                        None,
+                    )
+                ),
+            },
+        ),
     ):
         assert acme.cert("test") == result_renew
         assert acme.cert("testing.example.com", certname="test") == result_renew

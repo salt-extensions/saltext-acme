@@ -19,13 +19,16 @@ def test_cert_no_changes_test():
     """
     Test cert state with no needed changes. (test=True)
     """
-    with patch.dict(
-        acme.__salt__,
-        {
-            "acme.has": MagicMock(return_value=True),
-            "acme.needs_renewal": MagicMock(return_value=False),
-        },
-    ), patch.dict(acme.__opts__, {"test": True}):
+    with (
+        patch.dict(
+            acme.__salt__,
+            {
+                "acme.has": MagicMock(return_value=True),
+                "acme.needs_renewal": MagicMock(return_value=False),
+            },
+        ),
+        patch.dict(acme.__opts__, {"test": True}),
+    ):
         match = {
             "name": "test",
             "result": True,
@@ -62,13 +65,16 @@ def test_cert_fresh_certificate_test():
     Test cert state fetching a new certificate. (test=True)
     """
     # With test=True
-    with patch.dict(
-        acme.__salt__,
-        {
-            "acme.has": MagicMock(return_value=False),
-            "acme.info": MagicMock(return_value={"foo": "bar"}),
-        },
-    ), patch.dict(acme.__opts__, {"test": True}):
+    with (
+        patch.dict(
+            acme.__salt__,
+            {
+                "acme.has": MagicMock(return_value=False),
+                "acme.info": MagicMock(return_value={"foo": "bar"}),
+            },
+        ),
+        patch.dict(acme.__opts__, {"test": True}),
+    ):
         match = {
             "name": "test",
             "result": None,
@@ -105,15 +111,18 @@ def test_cert_renew_certificate_test():
     """
     Test cert state renewing a certificate. (test=True)
     """
-    with patch.dict(
-        acme.__salt__,
-        {
-            "acme.has": MagicMock(return_value=True),
-            "acme.needs_renewal": MagicMock(return_value=True),
-            "acme.info": MagicMock(side_effect=[{"name": "old cert"}] * 2),
-            "acme.cert": MagicMock(return_value={"result": True, "comment": "Mockery"}),
-        },
-    ), patch.dict(acme.__opts__, {"test": True}):
+    with (
+        patch.dict(
+            acme.__salt__,
+            {
+                "acme.has": MagicMock(return_value=True),
+                "acme.needs_renewal": MagicMock(return_value=True),
+                "acme.info": MagicMock(side_effect=[{"name": "old cert"}] * 2),
+                "acme.cert": MagicMock(return_value={"result": True, "comment": "Mockery"}),
+            },
+        ),
+        patch.dict(acme.__opts__, {"test": True}),
+    ):
         match = {
             "name": "test",
             "result": None,
