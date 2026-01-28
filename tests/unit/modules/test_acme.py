@@ -197,8 +197,7 @@ def test_cert():
         - datetime.datetime(1970, 1, 1, 0, 0, 0, 0)
     ).total_seconds()
     cmd_new_cert = {
-        "stdout": textwrap.dedent(
-            """
+        "stdout": textwrap.dedent("""
             IMPORTANT NOTES:
              - Congratulations! Your certificate and chain have been saved at:
                /etc/letsencrypt/live/test/fullchain.pem
@@ -212,17 +211,14 @@ def test_cert():
 
                Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
                Donating to EFF:                    https://eff.org/donate-le
-            """
-        ),
-        "stderr": textwrap.dedent(
-            """
+            """),
+        "stderr": textwrap.dedent("""
             Saving debug log to /var/log/letsencrypt/letsencrypt.log
             Plugins selected: Authenticator standalone, Installer None
             Starting new HTTPS connection (1): acme-v02.api.letsencrypt.org
             Obtaining a new certificate
             Resetting dropped connection: acme-v02.api.letsencrypt.org
-            """
-        ),
+            """),
         "retcode": 0,
     }
     result_new_cert = {
@@ -233,21 +229,17 @@ def test_cert():
     }
 
     cmd_no_renew = {
-        "stdout": textwrap.dedent(
-            """
+        "stdout": textwrap.dedent("""
             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             Certificate not yet due for renewal; no action taken.
             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            """
-        ),
-        "stderr": textwrap.dedent(
-            """Saving debug log to /var/log/letsencrypt/letsencrypt.log
+            """),
+        "stderr": textwrap.dedent("""Saving debug log to /var/log/letsencrypt/letsencrypt.log
             Plugins selected: Authenticator standalone, Installer None
             Starting new HTTPS connection (1): acme-v02.api.letsencrypt.org
             Cert not yet due for renewal
             Keeping the existing certificate
-            """
-        ),
+            """),
         "retcode": 0,
     }
     if salt.utils.platform.is_freebsd():
