@@ -51,10 +51,11 @@ LEA = salt.utils.path.which_bin(
         "/opt/letsencrypt/letsencrypt-auto",
     ]
 )
-LE_LIVE = "/etc/letsencrypt/live/"
 
 if salt.utils.platform.is_freebsd():
-    LE_LIVE = "/usr/local" + LE_LIVE
+    LE_LIVE = "/usr/local/etc/letsencrypt/live/"
+else:
+    LE_LIVE = "/etc/letsencrypt/live/"
 
 
 def __virtual__():
