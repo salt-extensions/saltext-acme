@@ -83,6 +83,10 @@ def _expires(name):
     # Use the salt module if available
     if "tls.cert_info" in __salt__:
         expiry = __salt__["tls.cert_info"](cert_file).get("not_after", 0)
+        return datetime.datetime.fromtimestamp(expiry)
+    elif "x509.read_certificate" in __salt__:
+        expiry = __salt__["x509.read_certificate"](cert_file)["not_after"]
+        return datetime.datetime.fromisoformat(expiry)
     # Cobble it together using the openssl binary
     else:
         openssl_cmd = f"openssl x509 -in {cert_file} -noout -enddate"
@@ -90,7 +94,7 @@ def _expires(name):
         strptime_sux_cmd = f'date --date="$({openssl_cmd} | cut -d= -f2)" +%s'
         expiry = float(__salt__["cmd.shell"](strptime_sux_cmd, output_loglevel="quiet"))
         # expiry = datetime.datetime.strptime(expiry.split('=', 1)[-1], '%b %e %H:%M:%S %Y %Z')
-    return datetime.datetime.fromtimestamp(expiry)
+        return datetime.datetime.fromtimestamp(expiry)
 
 
 def _renew_by(name, window=None):
